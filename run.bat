@@ -1,3 +1,2 @@
 @echo off
-python -m src.main
-pause
+python -m src.main %*

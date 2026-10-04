@@ -1,0 +1,5 @@
+ls -l
+foo
+cd "unclosed
+exit extra_arg
+cd /home

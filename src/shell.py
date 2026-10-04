@@ -6,8 +6,9 @@ class Shell:
     Класс Shell.
     Отвечает за обработку комманд.
     '''
-    def __init__(self):
+    def __init__(self, vfs_path=None):
         self.commands = COMMANDS
+        self.vfs_path = vfs_path
 
     def run_command(self, line):
         '''
