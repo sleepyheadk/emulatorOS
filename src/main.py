@@ -59,7 +59,8 @@ def main():
     ]
 
     if args.vfs is not None and not os.path.isdir(args.vfs):
-        debug.append(f"[DEBUG] ОШИБКА: VFS '{args.vfs}' не найдена или не является папкой")
+        debug.append(f"[DEBUG] ОШИБКА: VFS '{args.vfs}' не найдена "
+                     f"или не является папкой")
 
     script_lines = []
     if args.script is not None:

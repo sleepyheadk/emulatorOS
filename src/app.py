@@ -6,11 +6,13 @@ SCRIPT_DELAY_MS = 500
 
 class App(tk.Tk):
     '''
-    Класс App. Отвечает за управление графическим пользовательским интерфейсом.
+    Класс App. Отвечает за управление графическим пользовательским
+    интерфейсом.
     Наследуется от класса Tk.
     Объект класса - графическое окно.
     '''
-    def __init__(self, shell, vfs_name, prompt, debug_info="", script_lines=None):
+    def __init__(self, shell, vfs_name, prompt, debug_info="",
+                 script_lines=None):
         super().__init__()
         self.shell = shell
         self.title(f"VFS - {vfs_name}")
@@ -58,7 +60,8 @@ class App(tk.Tk):
         :return True, если является, и False, если не является.
         '''
         if self.output.tag_ranges("sel"):
-            return self.output.compare("sel.first", "<", "input_start")
+            return self.output.compare("sel.first",
+                                       "<", "input_start")
         return False
 
     def move_cursor_to_end(self):
@@ -76,7 +79,8 @@ class App(tk.Tk):
         Выполняет команду и выводит результат. Промпт и введённая строка
         уже находятся в виджете.
 
-        :return: False, если команда завершает работу (окно уничтожено), иначе True.
+        :return: False, если команда завершает работу (окно уничтожено),
+        иначе True.
         '''
         self.output.insert("end", "\n")
         result = self.shell.run_command(line)
@@ -95,11 +99,14 @@ class App(tk.Tk):
         '''
         Обрабатывает нажатие клавиши Enter.
 
-        Если ввод заблокирован (выполняется стартовый скрипт), ничего не делает.
-        Иначе берёт введённую пользователем строку и передаёт её в execute.
+        Если ввод заблокирован (выполняется стартовый скрипт),
+        ничего не делает.
+        Иначе берёт введённую пользователем строку и передаёт
+        её в execute.
 
         :param event: Событие нажатия клавиши Enter.
-        :return: "break" для предотвращения стандартной обработки Enter.
+        :return: "break" для предотвращения стандартной
+        обработки Enter.
         '''
         if self.input_locked:
             return "break"
@@ -108,9 +115,10 @@ class App(tk.Tk):
         return "break"
 
     def run_next_script_line(self):
-        '''Выполняет следующую строку стартового скрипта, имитируя ввод пользователя.'''
+        '''Выполняет следующую строку стартового скрипта,
+        имитируя ввод пользователя.'''
         if self.script_index >= len(self.script_lines):
-            self.input_locked = False  # скрипт закончился, ввод разрешён
+            self.input_locked = False
             self.output.focus()
             return
 
@@ -121,7 +129,7 @@ class App(tk.Tk):
             self.run_next_script_line()
             return
 
-        self.output.insert("end", line)  # показываем «введённую» команду
+        self.output.insert("end", line)
         self.output.see("end")
         if self.execute(line):
             self.after(SCRIPT_DELAY_MS, self.run_next_script_line)
@@ -156,17 +164,23 @@ class App(tk.Tk):
             return None
 
         if key == "BackSpace":
-            if self.output.compare("insert", "<=", "input_start") or self.selection_touches_history():
+            if (self.output.compare("insert",
+                                   "<=", "input_start")
+                    or self.selection_touches_history()):
                 return "break"
             return None
 
         if key == "Delete":
-            if self.output.compare("insert", "<", "input_start") or self.selection_touches_history():
+            if (self.output.compare("insert",
+                                   "<", "input_start")
+                    or self.selection_touches_history()):
                 return "break"
             return None
 
         if event.char and event.char.isprintable():
-            if self.output.compare("insert", "<", "input_start") or self.selection_touches_history():
+            if (self.output.compare("insert",
+                                   "<", "input_start")
+                    or self.selection_touches_history()):
                 self.move_cursor_to_end()
         return None
 
@@ -179,7 +193,8 @@ class App(tk.Tk):
 
         :param event: Событие отпускания кнопки мыши.
         '''
-        if not self.output.tag_ranges("sel") and self.output.compare("insert", "<", "input_start"):
+        if (not self.output.tag_ranges("sel") and
+                self.output.compare("insert", "<", "input_start")):
             self.output.mark_set("insert", "end-1c")
 
     def on_paste(self, event):
@@ -187,13 +202,16 @@ class App(tk.Tk):
         Обрабатывает вставку текста в виджет Text.
 
         Если курсор находится в истории команд или выделение
-        затрагивает историю, перемещает курсор в конец текущего ввода.
+        затрагивает историю, перемещает курсор в конец
+        текущего ввода.
 
         :param event: Событие вставки текста.
         :return: None для продолжения стандартной обработки вставки.
         '''
         if self.input_locked:
             return "break"
-        if self.output.compare("insert", "<", "input_start") or self.selection_touches_history():
+        if (self.output.compare("insert",
+                               "<", "input_start")
+                or self.selection_touches_history()):
             self.move_cursor_to_end()
         return None
